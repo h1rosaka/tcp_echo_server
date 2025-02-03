@@ -1,14 +1,16 @@
-#include <stdio.h> // For printf(), fprintf(), perror()
-#include <sys/socket.h> // For socket(), connect(), send(), recv()
 #include <arpa/inet.h> // For sockaddr_in, inet_addr()
+#include <stdio.h> // For printf(), fprintf(), perror()
 #include <stdlib.h> // For atoi()
 #include <string.h> // For exit(), memset()
+#include <sys/socket.h> // For socket(), connect(), send(), recv()
 #include <unistd.h> // For close()
 
-#define RECVBUFSIZE 32 // 受信バッファサイズ
-#define DEFAULT_PORT 7 // echo サービスの well-known ポート
 
-void errorHandler (char *msg) {
+#define DEFAULT_PORT 25001 // User Ports 1024 ~ 49151 の中で空いてそうな数字の大きなもの
+#define RECVBUFSIZE 32 // 受信バッファサイズ
+
+
+void printErrorMessageAndExit (char *msg) {
   perror(msg);
   exit(1);
 }
@@ -42,7 +44,7 @@ int main (int argc, char *argv[]) {
 
   // create socket
   if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
-    errorHandler("socket() failed");
+    printErrorMessageAndExit("socket() failed");
   }
 
   // create address struct of echo server
@@ -53,14 +55,14 @@ int main (int argc, char *argv[]) {
 
   // connect echo server
   if (connect(sock, (struct sockaddr *) &echoServerAddr, sizeof(echoServerAddr)) < 0) {
-    errorHandler("connect() failed");
+    printErrorMessageAndExit("connect() failed");
   }
 
   echoStringLen = strlen(echoString);
 
   // send message to echo server
   if (send(sock, echoString, echoStringLen, 0) != echoStringLen) {
-    errorHandler("send() failed");
+    printErrorMessageAndExit("send() failed");
   }
 
   // recieve message from echo server
@@ -68,7 +70,7 @@ int main (int argc, char *argv[]) {
   printf("Recieved: ");
   while (totalRecvBytes < echoStringLen) {
     if ((recvBytes = recv(sock, echoBuffer, RECVBUFSIZE-1, 0)) <= 0) {
-      errorHandler("recv() failed");
+      printErrorMessageAndExit("recv() failed");
     }
     totalRecvBytes += recvBytes;
     echoBuffer[recvBytes] = '\0';

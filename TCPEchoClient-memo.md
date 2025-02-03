@@ -51,8 +51,46 @@ exit(1)
 - https://www.ibm.com/docs/ja/i/7.3?topic=functions-exit-end-program
 
 
+```c
+  if ((argc < 3) || (argc > 4)) {
+    fprintf(stderr, "Usage: %s <Server IP> <Echo Word> [<Server Port>]\n", argv[0]);
+    exit(1);
+  }
+```
+argcはコマンドライン引数の数。argvは引数の入った配列。ただし、コンパイル後のファイルのファイル名もコマンド引数として扱われ、argcの数にも数えられ、argvの先頭にも入るので注意。
+- https://www.ritsumei.ac.jp/~mmr14135/johoWeb/cmnds.html
+
+fprintf
+- 指定したストリームにアウトプットを書き込む
+- fprintf() and vfprintf() write output to the given output stream
+- ストリーム
+    - ファイルの読み書きをする際に使う、ファイルの先頭から一列に並べたデータ
+    - C言語では、ストリームで入出力を行う対象をすべてファイルとして扱う(標準入力や標準出力も)
+    - https://www.ibe.kagoshima-u.ac.jp/static/www1/edu/gengo0/p13.html
+
+
+
+
+q
+
+
+```c
+echoServerPort = atoi(argv[3]);
+```
 atoi()
-- 文字列を整数に変える。
+- 文字列を整数に変える。ASCII to Integer
+- The atoi() function converts the initial portion of the string pointed to by str to int representation.
+- 先頭部分にある数字っぽいものを数字に変換する
+    - 例　
+- It is equivalent to:
+    (int)strtol(str, (char **)NULL, 10);
+
+
+
+
+
+
+
 
 
 
